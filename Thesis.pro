@@ -17,11 +17,11 @@ MOC_DIR=moc
 CONFIG-=app_bundle
 # Auto include all .cpp files in the project src directory (can specifiy individually if required)
 SOURCES+= $$PWD/src/*.cpp \
-          $$PWD/../RVO2-3D/*.cpp
+          $$PWD/include/RVO2-3D/*.cpp
 # same for the .h files
 HEADERS+= $$PWD/include/*.h \
           $$PWD/include/*.hpp \
-          $$PWD/../RVO2-3D/*.h
+          $$PWD/include/RVO2-3D/*.h
 #            include/Obstacle3D.h \
 #            include/luawrapper.hpp \
 #            include/luawrapperutil.hpp \
