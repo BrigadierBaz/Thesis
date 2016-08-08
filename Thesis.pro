@@ -3,7 +3,10 @@ TARGET=Thesis
 # where to put the .o files
 OBJECTS_DIR=obj
 # core Qt Libs to use add more here if needed.
-QT+=gui opengl core
+QT+=gui \
+    opengl \
+    core \
+    widgets
 
 # as I want to support 4.8 and 5 this will set a flag for some of the mac stuff
 # mainly in the types.h file for the setMacVisual which is native in Qt5
@@ -15,29 +18,34 @@ isEqual(QT_MAJOR_VERSION, 5) {
 MOC_DIR=moc
 # on a mac we don't create a .app bundle file ( for ease of multiplatform use)
 CONFIG-=app_bundle
+CONFIG += c++11
 # Auto include all .cpp files in the project src directory (can specifiy individually if required)
 SOURCES+= $$PWD/src/*.cpp \
-          $$PWD/include/RVO2-3D/*.cpp
+          $$PWD/src/RVO2-3D/*.cpp
 # same for the .h files
 HEADERS+= $$PWD/include/*.h \
           $$PWD/include/*.hpp \
-          $$PWD/include/RVO2-3D/*.h
+          $$PWD/include/RVO2-3D/*.h \
+          $$PWD/include/lua/*.h
 #            include/Obstacle3D.h \
 #            include/luawrapper.hpp \
 #            include/luawrapperutil.hpp \
 #    include/LuaInterpreter.h \
 
 # and add the include dir into the search path for Qt and make
-INCLUDEPATH +=./include
-INCLUDEPATH +=$$PWD/../RVO2-3D/
+INCLUDEPATH +=./include \
+              $$PWD/../RVO2-3D/ \
+              $$PWD/../lua/
 # where our exe is going to live (root of project)
 DESTDIR=./
 # add the glsl shader files
-OTHER_FILES+= README.md
+OTHER_FILES+= README.md \
+              $$PWD/LuaScripts/*lua
 # were are going to default to a console app
 CONFIG += console
 # additional files
-DISTFILES += *.lua
+DISTFILES += *.lua \
+             *.qss
 # note each command you add needs a ; as it will be run as a single line
 # first check if we are shadow building or not easiest way is to check out against current
 #!equals(PWD, $${OUT_PWD}){
@@ -65,3 +73,6 @@ else{ # note brace must be here
 }
 
 unix|win32: LIBS += -llua-5.1
+
+FORMS += UserInterface.ui \
+    FileLoad.ui

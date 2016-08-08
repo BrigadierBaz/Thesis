@@ -16,12 +16,16 @@ constexpr float INCREMENT=1.0f;
 //----------------------------------------------------------------------------------------------------------------------
 constexpr float ZOOM=8.0f;
 
-
-NGLScene::NGLScene()
+NGLScene::NGLScene( QWidget *_parent ) : QOpenGLWidget( _parent )
 {
+  // set this widget to have the initial keyboard focus
+  setFocus();
   // re-size the widget to that of the parent (in this case the GLFrame passed in on construction)
-  setTitle("RVO2 Demo Sphere Space to Pause R to reset");
+  this->resize(_parent->size());
+
   m_flock.reset(new Flock);
+
+  // re-size the widget to that of the parent (in this case the GLFrame passed in on construction)
 }
 
 
@@ -44,10 +48,12 @@ void NGLScene::resizeGL(int _w , int _h)
 
 void NGLScene::timerEvent(QTimerEvent *)
 {
-  if(!m_flock->reachedGoal() && m_flock->m_animate)
+  if(m_flock->m_animate)
   {
+    //By calling the script here, this prevents multiple calls and increases performance
     m_flock->setPreferredVelocities();
-    m_flock->m_sim->doStep();
+    m_flock->m_lua->m_sim->doStep();
+
   }
   update();
 }
@@ -108,6 +114,7 @@ void NGLScene::loadMatricesToShader()
 
 void NGLScene::paintGL()
 {
+
   // clear the screen and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0,0,m_width,m_height);
@@ -118,12 +125,28 @@ void NGLScene::paintGL()
     shader->setUniform("Colour",0.0f,1.0f,0.0f,1.0f);
 
     ngl::Transformation t;
-    t.setPosition(m_flock->m_goalPosition.x(),m_flock->m_goalPosition.y(),m_flock->m_goalPosition.z());
+    t.setPosition(m_flock->m_lua->m_goal.x(),
+                  m_flock->m_lua->m_goal.y(),
+                  m_flock->m_lua->m_goal.z());
     t.setScale(2.0,1.0,2.0);
     m_bodyTransform=t.getMatrix();
     loadMatricesToShader();
     ngl::VAOPrimitives::instance()->draw("cube");
 
+    for (size_t i = 0; i < Flock::m_lua->m_predators.size(); ++i)
+    {
+      shader->setUniform("Colour",1.0f,0.0f,1.0f,1.0f);
+
+      RVO::Vector3 p = m_flock->m_lua->m_predators[i];
+
+      t.setPosition(p.x(),p.y(),p.z());
+      t.setScale(8.0,8.0,8.0);
+      m_bodyTransform=t.getMatrix();
+      loadMatricesToShader();
+      ngl::VAOPrimitives::instance()->draw("troll");
+    }
+
+    m_flock->m_lua->m_predators.clear();
 
   for(size_t j=0; j < 4; j++)
   {
@@ -151,11 +174,14 @@ void NGLScene::paintGL()
   m_globalTransformMatrix.m_m[3][2] = m_modelPos.m_z;
   // now draw
   m_vao->bind();
-  for (size_t i = 0; i < m_flock->m_sim->getNumAgents(); ++i)
+
+  shader->setUniform("Colour",1.0f,0.0f,0.0f,1.0f);
+
+  for (size_t i = 0; i < m_flock->m_lua->m_sim->getNumAgents(); ++i)
   {
     ngl::Transformation t;
-    RVO::Vector3 p=m_flock->m_sim->getAgentPosition(i);
-    RVO::Vector3 v=m_flock->m_sim->getAgentVelocity(i);
+    RVO::Vector3 p=m_flock->m_lua->m_sim->getAgentPosition(i);
+    RVO::Vector3 v=m_flock->m_lua->m_sim->getAgentVelocity(i);
     RVO::Vector3 next=p+v;
 
     RVO::Vector3 f=next-p;
@@ -281,7 +307,7 @@ void NGLScene::mouseMoveEvent (QMouseEvent * _event)
     int diffY = (int)(_event->y() - m_origYPos);
     m_origXPos=_event->x();
     m_origYPos=_event->y();
-    m_flock->m_goalPosition.operator += (RVO::Vector3((INCREMENT * diffX)*1,0.0,(INCREMENT * diffY)*1));
+    m_flock->m_lua->m_goal.operator += (RVO::Vector3((INCREMENT * diffX)*1,0.0,(INCREMENT * diffY)*1));
 
    }
 }

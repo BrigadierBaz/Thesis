@@ -6,7 +6,9 @@
 #include <ngl/Transformation.h>
 #include <ngl/Text.h>
 #include <ngl/VAOFactory.h>
-#include <QOpenGLWindow>
+#include <QEvent>
+#include <QResizeEvent>
+#include <QOpenGLWidget>
 #include "RVO.h"
 #include "Flock.h"
 //----------------------------------------------------------------------------------------------------------------------
@@ -22,14 +24,15 @@
 /// put in this file
 //----------------------------------------------------------------------------------------------------------------------
 
-class NGLScene : public QOpenGLWindow
+class NGLScene : public QOpenGLWidget
 {
+  Q_OBJECT        // must include this if you use Qt signals/slots
   public:
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief ctor for our NGL drawing class
     /// @param [in] parent the parent window to the class
     //----------------------------------------------------------------------------------------------------------------------
-    NGLScene();
+    NGLScene(QWidget *_parent );
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief dtor must close down ngl and release OpenGL resources
     //----------------------------------------------------------------------------------------------------------------------
@@ -43,6 +46,8 @@ class NGLScene : public QOpenGLWindow
     /// @brief this is called everytime we want to draw the scene
     //----------------------------------------------------------------------------------------------------------------------
     void paintGL();
+
+    std::unique_ptr<Flock> m_flock;
 
 private:
     //----------------------------------------------------------------------------------------------------------------------
@@ -145,9 +150,9 @@ private:
 
     void buildVAO();
     std::unique_ptr<ngl::VertexArrayObject> m_vao;
-    std::unique_ptr<Flock> m_flock;
     void timerEvent(QTimerEvent *);
     void loadMatricesToShader();
+    void updateVelocities();
 
 
 };

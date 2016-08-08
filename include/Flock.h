@@ -7,21 +7,23 @@
 //# include "lualib.h"
 //}
 
+#include "luawrapper.hpp"
+
 #include <memory>
 #include "RVO.h"
-
-#include "kaguya.hpp"
 #include "LuaInterpreter.h"
+
+//#include "ka"
 
 class Flock
 {
 public:
   Flock();
 
+  int m_agentCount = 0;
+
 //  void loadScript(lua_State* L, const std::string& scriptFilename);
 
-  bool m_stray = false;
-  bool m_danger = false;
 
 //  bool m_alignment = false;
 //  bool m_expand = false;
@@ -68,8 +70,8 @@ public:
 
 
   /// the sim
-  std::unique_ptr<RVO::RVOSimulator> m_sim;
-  std::unique_ptr<LuaInterpreter> m_lua;
+  //std::unique_ptr<RVO::RVOSimulator> m_sim;
+  static std::unique_ptr <LuaInterpreter> m_lua;
   std::vector <RVO::Vector3> m_goals;
   //std::shared_ptr<LuaScript> interactFunc;
   void setupSim();
@@ -78,6 +80,11 @@ public:
   //RVO::Vector3 getVelocities(size_t agentNum);
   //int l_getVelocities(lua_State* L);
 //  void loadScript(lua_State* L, const std::string& scriptFilename);
+
+  //int m_argc;
+  //char *m_argv[];
+
+  void processCommandLine(int argc, char **argv);
 
   bool m_animate=true;
 
@@ -91,6 +98,12 @@ public:
   int   m_numberOfBlocks;
   float m_blocksOffset;
 
+  // Agent defaults
+  double m_neighborDist = 15.0f;
+  int m_numOfNeighbors = 15;
+  double m_agentRadius;
+
+
   std::vector <RVO::Vector3> m_obstacles;
 
 //    RVO::Vector3 m_vCenterOfSchool;
@@ -102,7 +115,7 @@ public:
 
 
   RVO::Vector3 m_centerOfSchool = RVO::Vector3(0.0f,0.0f,0.0f);
-  RVO::Vector3 m_goalPosition = RVO::Vector3(0.0f,0.0f,0.0f);
+  //RVO::Vector3 m_goalPosition = RVO::Vector3(0.0f,0.0f,0.0f);
 
 };
 

@@ -1,0 +1,34 @@
+vNeighborPosition.operator /=(1);
+        float d = ((2 * 3.14159 * RVO::absSq(vAgentToCenter)) / abs(vNeighborPosition - m_sim->getAgentPosition(i)));
+        
+        
+RVO::Vector3 vSwirlAround ( m_sim->getAgentVelocity(i) * (2*3.14159* RVO::absSq(vCenterOfSchool)));
+
+
+RVO::normalize(vAgentToCenter);
+
+        RVO::Vector3 vSwirlAround ( pow(centerVector.x(),2)/abs(vAgentToCenter),
+                                    pow(centerVector.y(),2)/abs(vAgentToCenter),
+                                    pow(centerVector.z(),2)/abs(vAgentToCenter));
+                                    
+
+        RVO::Vector3 vSwirlAround ( vAgentToCenter.x()*2,//* (M_PI * 1.0f),
+                                   (m_sim->getAgentVelocity(i).y())*2,
+                                   (m_sim->getAgentVelocity(i).z())*2);
+                                   
+
+ RVO::Vector3 vCurrentPosition = m_sim->getAgentPosition(i);
+        RVO::Vector3 vSwirlAround ((vCurrentPosition.x() - centerVector.x()) * (M_PI * 1.0f),
+                                   0.0f,
+                                   (vCurrentPosition.z() - centerVector.z()) * (M_PI * 1.0f));                                                                       
+                                   
+ RVO::Vector3 vCurrentPosition = m_sim->getAgentPosition(i);
+        RVO::Vector3 vSwirlAround (pow(vCurrentPosition.x() - centerVector.x(),2) * (M_PI * 2.0f),
+                                   0.0f,
+                                   pow(vCurrentPosition.z() - centerVector.z(),2) * (M_PI * 2.0f));
+
+
+
+        RVO::Vector3 vSwirlAround (cos(centerVector.x() - vAgentToGoal.x()),
+                                   sin(centerVector.y() - vAgentToGoal.y()),
+                                   cos(centerVector.z() - vAgentToGoal.z()));                                   
