@@ -101,7 +101,7 @@ void Flock::setPreferredVelocities()
 //    /* load the script */
 //    else{ luaL_dofile(m_lua->L, "baitBall.lua");}
 
-  luaL_dofile(m_lua->L, "baitBall.lua");
+  luaL_dofile(m_lua->L, "LuaScripts/baitBall.lua");
 
   lua_close(m_lua->L);
 

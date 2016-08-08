@@ -74,5 +74,4 @@ else{ # note brace must be here
 
 unix|win32: LIBS += -llua-5.1
 
-FORMS += UserInterface.ui \
-    FileLoad.ui
+FORMS += $$PWD/ui/*.ui
