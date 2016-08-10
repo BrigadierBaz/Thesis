@@ -33,9 +33,9 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = Thesis1.0.0
-DISTDIR = /home/i7902033/RVO2NGL/ThesisEnhancements/obj/Thesis1.0.0
+DISTDIR = /home/i7902033/RVO2NGL/ThesisTuesdayCleanup/obj/Thesis1.0.0
 LINK          = g++
-LFLAGS        = -Wl,-rpath,/opt/qt/5.5/gcc_64 -Wl,-rpath,/home/i7902033/RVO2NGL/ThesisEnhancements/L/home/i7902033/NGL/lib -Wl,-rpath,/home/i7902033/NGL/lib -Wl,-rpath,/opt/qt/5.5/gcc_64/lib
+LFLAGS        = -Wl,-rpath,/opt/qt/5.5/gcc_64 -Wl,-rpath,/home/i7902033/RVO2NGL/ThesisTuesdayCleanup/L/home/i7902033/NGL/lib -Wl,-rpath,/home/i7902033/NGL/lib -Wl,-rpath,/opt/qt/5.5/gcc_64/lib
 LIBS          = $(SUBLIBS) -L/usr/local/lib -L/home/i7902033/NGL/lib -l NGL -ltiff -llua-5.1 -L/opt/qt/5.5/gcc_64/lib -lQt5OpenGL -L/usr/lib64 -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
@@ -48,50 +48,42 @@ OBJECTS_DIR   = obj/
 
 ####### Files
 
-SOURCES       = src/Flock.cpp \
+SOURCES       = src/FileLoad.cpp \
+		src/Flock.cpp \
 		src/LuaFunctions.cpp \
-		src/LuaGetSet.cpp \
 		src/LuaInterpreter.cpp \
 		src/main.cpp \
 		src/NGLScene.cpp \
-		src/Obstacle3D.cpp \
 		src/UserInterface.cpp \
 		src/RVO2-3D/Agent.cpp \
 		src/RVO2-3D/KdTree.cpp \
-		src/RVO2-3D/RVOSimulator.cpp \
-		FileLoad.cpp moc/moc_NGLScene.cpp \
-		moc/moc_UserInterface.cpp \
-		moc/moc_FileLoad.cpp
-OBJECTS       = obj/Flock.o \
+		src/RVO2-3D/RVOSimulator.cpp moc/moc_FileLoad.cpp \
+		moc/moc_NGLScene.cpp \
+		moc/moc_UserInterface.cpp
+OBJECTS       = obj/FileLoad.o \
+		obj/Flock.o \
 		obj/LuaFunctions.o \
-		obj/LuaGetSet.o \
 		obj/LuaInterpreter.o \
 		obj/main.o \
 		obj/NGLScene.o \
-		obj/Obstacle3D.o \
 		obj/UserInterface.o \
 		obj/Agent.o \
 		obj/KdTree.o \
 		obj/RVOSimulator.o \
-		obj/FileLoad.o \
+		obj/moc_FileLoad.o \
 		obj/moc_NGLScene.o \
-		obj/moc_UserInterface.o \
-		obj/moc_FileLoad.o
+		obj/moc_UserInterface.o
 DIST          = *.lua \
 		*.qss \
 		../../NGL/UseNGL.pri \
-		Thesis.pro include/Flock.h \
+		Thesis.pro include/FileLoad.h \
+		include/Flock.h \
 		include/LuaInterpreter.h \
-		include/LuaVector3.h \
 		include/NGLScene.h \
-		include/Obstacle3D.h \
-		include/OpenGlInterface.h \
 		include/UserInterface.h \
-		include/kaguya.hpp \
 		include/lua.hpp \
 		include/LuaCustomTypes.hpp \
 		include/LuaFunctions.hpp \
-		include/LuaGetSet.hpp \
 		include/luawrapper.hpp \
 		include/luawrapperutil.hpp \
 		include/RVO2-3D/Agent.h \
@@ -104,20 +96,16 @@ DIST          = *.lua \
 		include/lua/lauxlib.h \
 		include/lua/lua.h \
 		include/lua/luaconf.h \
-		include/lua/lualib.h \
-		FileLoad.h \
-		include/OpenGlInterface.h src/Flock.cpp \
+		include/lua/lualib.h src/FileLoad.cpp \
+		src/Flock.cpp \
 		src/LuaFunctions.cpp \
-		src/LuaGetSet.cpp \
 		src/LuaInterpreter.cpp \
 		src/main.cpp \
 		src/NGLScene.cpp \
-		src/Obstacle3D.cpp \
 		src/UserInterface.cpp \
 		src/RVO2-3D/Agent.cpp \
 		src/RVO2-3D/KdTree.cpp \
-		src/RVO2-3D/RVOSimulator.cpp \
-		FileLoad.cpp
+		src/RVO2-3D/RVOSimulator.cpp
 QMAKE_TARGET  = Thesis
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = Thesis
@@ -145,7 +133,7 @@ first: all
 
 ####### Build rules
 
-$(TARGET): ui_UserInterface.h ui_FileLoad.h $(OBJECTS)  
+$(TARGET): ui_FileLoad.h ui_UserInterface.h ui_UserInterfaceBackup.h $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
 Makefile: Thesis.pro ../../.qmake.cache /opt/qt/5.5/gcc_64/mkspecs/linux-g++/qmake.conf /opt/qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
@@ -439,9 +427,9 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents include/Flock.h include/LuaInterpreter.h include/LuaVector3.h include/NGLScene.h include/Obstacle3D.h include/OpenGlInterface.h include/UserInterface.h include/kaguya.hpp include/lua.hpp include/LuaCustomTypes.hpp include/LuaFunctions.hpp include/LuaGetSet.hpp include/luawrapper.hpp include/luawrapperutil.hpp include/RVO2-3D/Agent.h include/RVO2-3D/API.h include/RVO2-3D/Definitions.h include/RVO2-3D/KdTree.h include/RVO2-3D/RVO.h include/RVO2-3D/RVOSimulator.h include/RVO2-3D/Vector3.h include/lua/lauxlib.h include/lua/lua.h include/lua/luaconf.h include/lua/lualib.h FileLoad.h include/OpenGlInterface.h $(DISTDIR)/
-	$(COPY_FILE) --parents src/Flock.cpp src/LuaFunctions.cpp src/LuaGetSet.cpp src/LuaInterpreter.cpp src/main.cpp src/NGLScene.cpp src/Obstacle3D.cpp src/UserInterface.cpp src/RVO2-3D/Agent.cpp src/RVO2-3D/KdTree.cpp src/RVO2-3D/RVOSimulator.cpp FileLoad.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents UserInterface.ui FileLoad.ui $(DISTDIR)/
+	$(COPY_FILE) --parents include/FileLoad.h include/Flock.h include/LuaInterpreter.h include/NGLScene.h include/UserInterface.h include/lua.hpp include/LuaCustomTypes.hpp include/LuaFunctions.hpp include/luawrapper.hpp include/luawrapperutil.hpp include/RVO2-3D/Agent.h include/RVO2-3D/API.h include/RVO2-3D/Definitions.h include/RVO2-3D/KdTree.h include/RVO2-3D/RVO.h include/RVO2-3D/RVOSimulator.h include/RVO2-3D/Vector3.h include/lua/lauxlib.h include/lua/lua.h include/lua/luaconf.h include/lua/lualib.h $(DISTDIR)/
+	$(COPY_FILE) --parents src/FileLoad.cpp src/Flock.cpp src/LuaFunctions.cpp src/LuaInterpreter.cpp src/main.cpp src/NGLScene.cpp src/UserInterface.cpp src/RVO2-3D/Agent.cpp src/RVO2-3D/KdTree.cpp src/RVO2-3D/RVOSimulator.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ui/FileLoad.ui ui/UserInterface.ui ui/UserInterfaceBackup.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -464,9 +452,127 @@ check: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: moc/moc_NGLScene.cpp moc/moc_UserInterface.cpp moc/moc_FileLoad.cpp
+compiler_moc_header_make_all: moc/moc_FileLoad.cpp moc/moc_NGLScene.cpp moc/moc_UserInterface.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc/moc_NGLScene.cpp moc/moc_UserInterface.cpp moc/moc_FileLoad.cpp
+	-$(DEL_FILE) moc/moc_FileLoad.cpp moc/moc_NGLScene.cpp moc/moc_UserInterface.cpp
+moc/moc_FileLoad.cpp: /opt/qt/5.5/gcc_64/include/QtWidgets/QDialog \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qdialog.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qwidget.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qglobal.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qconfig.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qfeatures.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qtypetraits.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qlogging.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qflags.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qatomic.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_gcc.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_msvc.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_armv7.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_armv6.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_armv5.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_ia64.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_mips.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_x86.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_unix.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qmutex.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qnumeric.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qnamespace.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qobject.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qstring.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qchar.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qbytearray.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qrefcount.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qarraydata.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qlist.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qiterator.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qbytearraylist.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qstringlist.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qregexp.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qmetatype.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qisenum.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qmargins.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qrect.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qsize.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qpoint.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qpalette.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qcolor.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qrgb.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qbrush.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qpair.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qvector.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qmatrix.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qpolygon.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qregion.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qdatastream.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qiodevice.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qline.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qtransform.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qimage.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qpixelformat.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qpixmap.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qshareddata.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qhash.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qfont.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qfontmetrics.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qfontinfo.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qcursor.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qevent.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qvariant.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qmap.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qdebug.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qtextstream.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qlocale.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qset.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qurl.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qurlquery.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qfile.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qfiledevice.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qvector2d.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qtouchdevice.h \
+		include/Flock.h \
+		include/luawrapper.hpp \
+		../lua/lua.h \
+		../lua/luaconf.h \
+		../lua/lauxlib.h \
+		../RVO2-3D/RVO.h \
+		../RVO2-3D/API.h \
+		../RVO2-3D/RVOSimulator.h \
+		../RVO2-3D/Vector3.h \
+		include/LuaInterpreter.h \
+		include/lua.hpp \
+		../lua/lualib.h \
+		include/FileLoad.h
+	/opt/qt/5.5/gcc_64/bin/moc $(DEFINES) -I/opt/qt/5.5/gcc_64/mkspecs/linux-g++ -I/home/i7902033/RVO2NGL/ThesisTuesdayCleanup -I/home/i7902033/RVO2NGL/ThesisTuesdayCleanup/include -I/home/i7902033/RVO2NGL/RVO2-3D -I/home/i7902033/RVO2NGL/lua -I/home/i7902033/NGL/include -I/opt/qt/5.5/gcc_64/include -I/opt/qt/5.5/gcc_64/include/QtOpenGL -I/opt/qt/5.5/gcc_64/include/QtWidgets -I/opt/qt/5.5/gcc_64/include/QtGui -I/opt/qt/5.5/gcc_64/include/QtCore include/FileLoad.h -o moc/moc_FileLoad.cpp
+
 moc/moc_NGLScene.cpp: ../../NGL/include/ngl/Camera.h \
 		../../NGL/include/ngl/Types.h \
 		../../NGL/include/ngl/glew.h \
@@ -621,7 +727,7 @@ moc/moc_NGLScene.cpp: ../../NGL/include/ngl/Camera.h \
 		include/lua.hpp \
 		../lua/lualib.h \
 		include/NGLScene.h
-	/opt/qt/5.5/gcc_64/bin/moc $(DEFINES) -I/opt/qt/5.5/gcc_64/mkspecs/linux-g++ -I/home/i7902033/RVO2NGL/ThesisEnhancements -I/home/i7902033/RVO2NGL/ThesisEnhancements/include -I/home/i7902033/RVO2NGL/RVO2-3D -I/home/i7902033/RVO2NGL/lua -I/home/i7902033/NGL/include -I/opt/qt/5.5/gcc_64/include -I/opt/qt/5.5/gcc_64/include/QtOpenGL -I/opt/qt/5.5/gcc_64/include/QtWidgets -I/opt/qt/5.5/gcc_64/include/QtGui -I/opt/qt/5.5/gcc_64/include/QtCore include/NGLScene.h -o moc/moc_NGLScene.cpp
+	/opt/qt/5.5/gcc_64/bin/moc $(DEFINES) -I/opt/qt/5.5/gcc_64/mkspecs/linux-g++ -I/home/i7902033/RVO2NGL/ThesisTuesdayCleanup -I/home/i7902033/RVO2NGL/ThesisTuesdayCleanup/include -I/home/i7902033/RVO2NGL/RVO2-3D -I/home/i7902033/RVO2NGL/lua -I/home/i7902033/NGL/include -I/opt/qt/5.5/gcc_64/include -I/opt/qt/5.5/gcc_64/include/QtOpenGL -I/opt/qt/5.5/gcc_64/include/QtWidgets -I/opt/qt/5.5/gcc_64/include/QtGui -I/opt/qt/5.5/gcc_64/include/QtCore include/NGLScene.h -o moc/moc_NGLScene.cpp
 
 moc/moc_UserInterface.cpp: /opt/qt/5.5/gcc_64/include/QtWidgets/QMainWindow \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/qmainwindow.h \
@@ -781,10 +887,38 @@ moc/moc_UserInterface.cpp: /opt/qt/5.5/gcc_64/include/QtWidgets/QMainWindow \
 		include/LuaInterpreter.h \
 		include/lua.hpp \
 		../lua/lualib.h \
+		include/FileLoad.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QDialog \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qdialog.h \
 		include/UserInterface.h
-	/opt/qt/5.5/gcc_64/bin/moc $(DEFINES) -I/opt/qt/5.5/gcc_64/mkspecs/linux-g++ -I/home/i7902033/RVO2NGL/ThesisEnhancements -I/home/i7902033/RVO2NGL/ThesisEnhancements/include -I/home/i7902033/RVO2NGL/RVO2-3D -I/home/i7902033/RVO2NGL/lua -I/home/i7902033/NGL/include -I/opt/qt/5.5/gcc_64/include -I/opt/qt/5.5/gcc_64/include/QtOpenGL -I/opt/qt/5.5/gcc_64/include/QtWidgets -I/opt/qt/5.5/gcc_64/include/QtGui -I/opt/qt/5.5/gcc_64/include/QtCore include/UserInterface.h -o moc/moc_UserInterface.cpp
+	/opt/qt/5.5/gcc_64/bin/moc $(DEFINES) -I/opt/qt/5.5/gcc_64/mkspecs/linux-g++ -I/home/i7902033/RVO2NGL/ThesisTuesdayCleanup -I/home/i7902033/RVO2NGL/ThesisTuesdayCleanup/include -I/home/i7902033/RVO2NGL/RVO2-3D -I/home/i7902033/RVO2NGL/lua -I/home/i7902033/NGL/include -I/opt/qt/5.5/gcc_64/include -I/opt/qt/5.5/gcc_64/include/QtOpenGL -I/opt/qt/5.5/gcc_64/include/QtWidgets -I/opt/qt/5.5/gcc_64/include/QtGui -I/opt/qt/5.5/gcc_64/include/QtCore include/UserInterface.h -o moc/moc_UserInterface.cpp
 
-moc/moc_FileLoad.cpp: /opt/qt/5.5/gcc_64/include/QtWidgets/QDialog \
+compiler_moc_source_make_all:
+compiler_moc_source_clean:
+compiler_uic_make_all: ui_FileLoad.h ui_UserInterface.h ui_UserInterfaceBackup.h
+compiler_uic_clean:
+	-$(DEL_FILE) ui_FileLoad.h ui_UserInterface.h ui_UserInterfaceBackup.h
+ui_FileLoad.h: ui/FileLoad.ui
+	/opt/qt/5.5/gcc_64/bin/uic ui/FileLoad.ui -o ui_FileLoad.h
+
+ui_UserInterface.h: ui/UserInterface.ui
+	/opt/qt/5.5/gcc_64/bin/uic ui/UserInterface.ui -o ui_UserInterface.h
+
+ui_UserInterfaceBackup.h: ui/UserInterfaceBackup.ui
+	/opt/qt/5.5/gcc_64/bin/uic ui/UserInterfaceBackup.ui -o ui_UserInterfaceBackup.h
+
+compiler_yacc_decl_make_all:
+compiler_yacc_decl_clean:
+compiler_yacc_impl_make_all:
+compiler_yacc_impl_clean:
+compiler_lex_make_all:
+compiler_lex_clean:
+compiler_clean: compiler_moc_header_clean compiler_uic_clean 
+
+####### Compile
+
+obj/FileLoad.o: src/FileLoad.cpp include/FileLoad.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QDialog \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/qdialog.h \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/qwidget.h \
 		/opt/qt/5.5/gcc_64/include/QtGui/qwindowdefs.h \
@@ -887,29 +1021,76 @@ moc/moc_FileLoad.cpp: /opt/qt/5.5/gcc_64/include/QtWidgets/QDialog \
 		/opt/qt/5.5/gcc_64/include/QtCore/qfiledevice.h \
 		/opt/qt/5.5/gcc_64/include/QtGui/qvector2d.h \
 		/opt/qt/5.5/gcc_64/include/QtGui/qtouchdevice.h \
-		FileLoad.h
-	/opt/qt/5.5/gcc_64/bin/moc $(DEFINES) -I/opt/qt/5.5/gcc_64/mkspecs/linux-g++ -I/home/i7902033/RVO2NGL/ThesisEnhancements -I/home/i7902033/RVO2NGL/ThesisEnhancements/include -I/home/i7902033/RVO2NGL/RVO2-3D -I/home/i7902033/RVO2NGL/lua -I/home/i7902033/NGL/include -I/opt/qt/5.5/gcc_64/include -I/opt/qt/5.5/gcc_64/include/QtOpenGL -I/opt/qt/5.5/gcc_64/include/QtWidgets -I/opt/qt/5.5/gcc_64/include/QtGui -I/opt/qt/5.5/gcc_64/include/QtCore FileLoad.h -o moc/moc_FileLoad.cpp
-
-compiler_moc_source_make_all:
-compiler_moc_source_clean:
-compiler_uic_make_all: ui_UserInterface.h ui_FileLoad.h
-compiler_uic_clean:
-	-$(DEL_FILE) ui_UserInterface.h ui_FileLoad.h
-ui_UserInterface.h: UserInterface.ui
-	/opt/qt/5.5/gcc_64/bin/uic UserInterface.ui -o ui_UserInterface.h
-
-ui_FileLoad.h: FileLoad.ui
-	/opt/qt/5.5/gcc_64/bin/uic FileLoad.ui -o ui_FileLoad.h
-
-compiler_yacc_decl_make_all:
-compiler_yacc_decl_clean:
-compiler_yacc_impl_make_all:
-compiler_yacc_impl_clean:
-compiler_lex_make_all:
-compiler_lex_clean:
-compiler_clean: compiler_moc_header_clean compiler_uic_clean 
-
-####### Compile
+		include/Flock.h \
+		include/luawrapper.hpp \
+		../lua/lua.h \
+		../lua/luaconf.h \
+		../lua/lauxlib.h \
+		../RVO2-3D/RVO.h \
+		../RVO2-3D/API.h \
+		../RVO2-3D/RVOSimulator.h \
+		../RVO2-3D/Vector3.h \
+		include/LuaInterpreter.h \
+		include/lua.hpp \
+		../lua/lualib.h \
+		ui_FileLoad.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/QVariant \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QAction \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qaction.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qicon.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qactiongroup.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QApplication \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qapplication.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qcoreapplication.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qeventloop.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qguiapplication.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qinputmethod.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QButtonGroup \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qbuttongroup.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QGridLayout \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qgridlayout.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qlayout.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qboxlayout.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QHeaderView \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qheaderview.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qframe.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qstyleoption.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qvalidator.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qregularexpression.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qslider.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qabstractslider.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qstyle.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qtabbar.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qtabwidget.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qrubberband.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QPushButton \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qpushbutton.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QTextEdit \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qtextedit.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qtextdocument.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qtextoption.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qtextcursor.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qtextformat.h \
+		/opt/qt/5.5/gcc_64/include/QtGui/qpen.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/QFile \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QFileDialog \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qfiledialog.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qdir.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/qfileinfo.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QMessageBox \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qmessagebox.h \
+		/opt/qt/5.5/gcc_64/include/QtCore/QTextStream \
+		/opt/qt/5.5/gcc_64/include/QtCore/QDebug
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/FileLoad.o src/FileLoad.cpp
 
 obj/Flock.o: src/Flock.cpp include/Flock.h \
 		include/luawrapper.hpp \
@@ -926,11 +1107,12 @@ obj/Flock.o: src/Flock.cpp include/Flock.h \
 		include/LuaFunctions.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/Flock.o src/Flock.cpp
 
-obj/LuaFunctions.o: src/LuaFunctions.cpp ../lua/lua.h \
+obj/LuaFunctions.o: src/LuaFunctions.cpp include/lua.hpp \
+		../lua/lua.h \
 		../lua/luaconf.h \
 		../lua/lualib.h \
-		include/luawrapper.hpp \
 		../lua/lauxlib.h \
+		include/luawrapper.hpp \
 		include/luawrapperutil.hpp \
 		include/LuaCustomTypes.hpp \
 		../RVO2-3D/RVO.h \
@@ -938,16 +1120,8 @@ obj/LuaFunctions.o: src/LuaFunctions.cpp ../lua/lua.h \
 		../RVO2-3D/RVOSimulator.h \
 		../RVO2-3D/Vector3.h \
 		include/Flock.h \
-		include/LuaInterpreter.h \
-		include/lua.hpp
+		include/LuaInterpreter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/LuaFunctions.o src/LuaFunctions.cpp
-
-obj/LuaGetSet.o: src/LuaGetSet.cpp include/LuaGetSet.hpp \
-		../RVO2-3D/RVO.h \
-		../RVO2-3D/API.h \
-		../RVO2-3D/RVOSimulator.h \
-		../RVO2-3D/Vector3.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/LuaGetSet.o src/LuaGetSet.cpp
 
 obj/LuaInterpreter.o: src/LuaInterpreter.cpp include/LuaInterpreter.h \
 		include/lua.hpp \
@@ -1126,7 +1300,10 @@ obj/main.o: src/main.cpp /opt/qt/5.5/gcc_64/include/QtWidgets/QApplication \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/QMainWindow \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/qmainwindow.h \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/qtabwidget.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qicon.h
+		/opt/qt/5.5/gcc_64/include/QtGui/qicon.h \
+		include/FileLoad.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QDialog \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qdialog.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/main.o src/main.cpp
 
 obj/NGLScene.o: src/NGLScene.cpp /opt/qt/5.5/gcc_64/include/QtGui/QMouseEvent \
@@ -1300,9 +1477,6 @@ obj/NGLScene.o: src/NGLScene.cpp /opt/qt/5.5/gcc_64/include/QtGui/QMouseEvent \
 		../../NGL/include/ngl/Mat3.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/NGLScene.o src/NGLScene.cpp
 
-obj/Obstacle3D.o: src/Obstacle3D.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/Obstacle3D.o src/Obstacle3D.cpp
-
 obj/UserInterface.o: src/UserInterface.cpp include/UserInterface.h \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/QMainWindow \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/qmainwindow.h \
@@ -1462,6 +1636,9 @@ obj/UserInterface.o: src/UserInterface.cpp include/UserInterface.h \
 		include/LuaInterpreter.h \
 		include/lua.hpp \
 		../lua/lualib.h \
+		include/FileLoad.h \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/QDialog \
+		/opt/qt/5.5/gcc_64/include/QtWidgets/qdialog.h \
 		ui_UserInterface.h \
 		/opt/qt/5.5/gcc_64/include/QtCore/QVariant \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/QAction \
@@ -1519,13 +1696,10 @@ obj/UserInterface.o: src/UserInterface.cpp include/UserInterface.h \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/qfiledialog.h \
 		/opt/qt/5.5/gcc_64/include/QtCore/qdir.h \
 		/opt/qt/5.5/gcc_64/include/QtCore/qfileinfo.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qdialog.h \
 		/opt/qt/5.5/gcc_64/include/QtCore/QTextStream \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/QMessageBox \
 		/opt/qt/5.5/gcc_64/include/QtWidgets/qmessagebox.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/QDir \
-		FileLoad.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/QDialog
+		/opt/qt/5.5/gcc_64/include/QtCore/QDir
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/UserInterface.o src/UserInterface.cpp
 
 obj/Agent.o: src/RVO2-3D/Agent.cpp ../RVO2-3D/Agent.h \
@@ -1551,176 +1725,14 @@ obj/RVOSimulator.o: src/RVO2-3D/RVOSimulator.cpp ../RVO2-3D/RVOSimulator.h \
 		../RVO2-3D/KdTree.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/RVOSimulator.o src/RVO2-3D/RVOSimulator.cpp
 
-obj/FileLoad.o: FileLoad.cpp FileLoad.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/QDialog \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qdialog.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qwidget.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qwindowdefs.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qglobal.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qconfig.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qfeatures.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qsystemdetection.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qprocessordetection.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qcompilerdetection.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qtypeinfo.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qtypetraits.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qsysinfo.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qlogging.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qflags.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qatomic.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qbasicatomic.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_bootstrap.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qgenericatomic.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_cxx11.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_gcc.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_msvc.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_armv7.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_armv6.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_armv5.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_ia64.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_mips.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_x86.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qatomic_unix.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qglobalstatic.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qmutex.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qnumeric.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qobjectdefs.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qnamespace.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qwindowdefs_win.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qobject.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qstring.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qchar.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qbytearray.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qrefcount.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qarraydata.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qstringbuilder.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qlist.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qalgorithms.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qiterator.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qbytearraylist.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qstringlist.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qregexp.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qstringmatcher.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qcoreevent.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qscopedpointer.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qmetatype.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qvarlengtharray.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qcontainerfwd.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qisenum.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qobject_impl.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qmargins.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qpaintdevice.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qrect.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qsize.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qpoint.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qpalette.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qcolor.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qrgb.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qbrush.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qpair.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qvector.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qmatrix.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qpolygon.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qregion.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qdatastream.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qiodevice.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qline.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qtransform.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qpainterpath.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qimage.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qpixelformat.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qpixmap.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qsharedpointer.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qshareddata.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qhash.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qfont.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qfontmetrics.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qfontinfo.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qsizepolicy.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qcursor.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qkeysequence.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qevent.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qvariant.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qmap.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qdebug.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qtextstream.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qlocale.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qset.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qcontiguouscache.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qurl.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qurlquery.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qfile.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qfiledevice.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qvector2d.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qtouchdevice.h \
-		ui_FileLoad.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/QVariant \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/QAction \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qaction.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qicon.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qactiongroup.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/QApplication \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qapplication.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qcoreapplication.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qeventloop.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qdesktopwidget.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qguiapplication.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qinputmethod.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/QButtonGroup \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qbuttongroup.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/QGridLayout \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qgridlayout.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qlayout.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qlayoutitem.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qboxlayout.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/QHeaderView \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qheaderview.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qabstractitemview.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qabstractscrollarea.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qframe.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qabstractitemmodel.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qitemselectionmodel.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qstyleoption.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qabstractspinbox.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qvalidator.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qregularexpression.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qslider.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qabstractslider.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qstyle.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qtabbar.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qtabwidget.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qrubberband.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/QPushButton \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qpushbutton.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qabstractbutton.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/QTextEdit \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qtextedit.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qtextdocument.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qtextoption.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qtextcursor.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qtextformat.h \
-		/opt/qt/5.5/gcc_64/include/QtGui/qpen.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/QFile \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/QFileDialog \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qfiledialog.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qdir.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/qfileinfo.h \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/QMessageBox \
-		/opt/qt/5.5/gcc_64/include/QtWidgets/qmessagebox.h \
-		/opt/qt/5.5/gcc_64/include/QtCore/QTextStream
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/FileLoad.o FileLoad.cpp
+obj/moc_FileLoad.o: moc/moc_FileLoad.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/moc_FileLoad.o moc/moc_FileLoad.cpp
 
 obj/moc_NGLScene.o: moc/moc_NGLScene.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/moc_NGLScene.o moc/moc_NGLScene.cpp
 
 obj/moc_UserInterface.o: moc/moc_UserInterface.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/moc_UserInterface.o moc/moc_UserInterface.cpp
-
-obj/moc_FileLoad.o: moc/moc_FileLoad.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/moc_FileLoad.o moc/moc_FileLoad.cpp
 
 ####### Install
 

@@ -1,121 +1,42 @@
 #ifndef FLOCK_H
 #define FLOCK_H
 
-//extern "C" {
-//# include "lua.h"
-//# include "lauxlib.h"
-//# include "lualib.h"
-//}
-
 #include "luawrapper.hpp"
 
 #include <memory>
 #include "RVO.h"
 #include "LuaInterpreter.h"
 
-//#include "ka"
+//----------------------------------------------------------------------------------------------------------------------
+/// @file Flock.h
+/// @brief This class dictates the default status of the sim and which scripts to load.
+/// @author Luke Bazalgette
+/// @version 1.0
+/// @date 8/8/16
+//----------------------------------------------------------------------------------------------------------------------
+
 
 class Flock
 {
 public:
   Flock();
 
-  int m_agentCount = 0;
-
-//  void loadScript(lua_State* L, const std::string& scriptFilename);
-
-
-//  bool m_alignment = false;
-//  bool m_expand = false;
-//  bool m_cohesion = true;
-//  bool m_cohesionAlt = false;
-//  bool m_eddy = false;
-//  bool m_separation = false;
-//  bool m_targetCenter = false;
-//  bool m_repel = false;
-//  bool m_baitBall = false;
-//  bool m_tube = false;
-//  bool m_feather = false;
-//  bool m_geometric = false;
-//  bool m_trefoil = false;
-//  bool m_stretch = false;
-
-//      bool m_alignment = true;
-//      bool m_expand = true;
-//      bool m_cohesion = true;
-//      bool m_cohesionAlt = false;
-//      bool m_eddy = true;
-//      bool m_separation = true;
-//      bool m_targetCenter = true;
-//      bool m_repel = true;
-//      bool m_baitBall = true;
-//      bool m_tube = true;
-//      bool m_feather = true;
-//      bool m_geometric = true;
-//      bool m_trefoil = true;
-//      bool m_stretch = true;
-
-      float m_alignmentInfluence = 0.7f;
-      float m_cohesionInfluence;
-      float m_eddyInfluence = 0.4f;
-      float m_repelInfluence = 1.0f;
-
-      float m_baitBallInfluence = 2.0f;
-
-      float m_trefoilInfluence = 1.0f;
-      float m_geometricInfluence = 1.0f;
-      float m_stretchInfluence = 1.0f;
-      float m_featherInfluence = 1.0f;
-      float m_tubeInfluence = 1.0f;
-
-
   /// the sim
-  //std::unique_ptr<RVO::RVOSimulator> m_sim;
   static std::unique_ptr <LuaInterpreter> m_lua;
   std::vector <RVO::Vector3> m_goals;
-  //std::shared_ptr<LuaScript> interactFunc;
   void setupSim();
   void setPreferredVelocities();
-  bool reachedGoal();
-  //RVO::Vector3 getVelocities(size_t agentNum);
-  //int l_getVelocities(lua_State* L);
-//  void loadScript(lua_State* L, const std::string& scriptFilename);
 
-  //int m_argc;
-  //char *m_argv[];
+  // String to store filepath retrieved from file dialog
+  std::string m_luaSimScript = "";
 
   void processCommandLine(int argc, char **argv);
-
   bool m_animate=true;
-
-  //New Variables
-
-  float m_minNegative;
-  float m_minPositive;
-  float m_maxPositive;
-  float m_maxNegative;
-
-  int   m_numberOfBlocks;
-  float m_blocksOffset;
 
   // Agent defaults
   double m_neighborDist = 15.0f;
   int m_numOfNeighbors = 15;
-  double m_agentRadius;
-
-
-  std::vector <RVO::Vector3> m_obstacles;
-
-//    RVO::Vector3 m_vCenterOfSchool;
-//    RVO::Vector3 m_vGoalPosition;
-
-  enum class TerrainState {BASIC};
-
-  TerrainState m_terrainState = TerrainState::BASIC;
-
-
-  RVO::Vector3 m_centerOfSchool = RVO::Vector3(0.0f,0.0f,0.0f);
-  //RVO::Vector3 m_goalPosition = RVO::Vector3(0.0f,0.0f,0.0f);
+  double m_agentRadius = 2.0f;
 
 };
 

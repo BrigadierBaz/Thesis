@@ -6,6 +6,20 @@
 #include <memory>
 #include "RVO.h"
 
+//----------------------------------------------------------------------------------------------------------------------
+/// @file LuaInterpreter.h
+/// @brief This Command class contains a series of functions to be called via Lua.
+/// @author Luke Bazalgette
+/// Derived from :-
+/// Alex Ames (April 8 2013). LuaWrapperExample/example2 [online].
+/// [Accessed 2016]. Available from: <https://bitbucket.org/alexames/luawrapperexample/src/f6958844b60f91ed90d039eabe807522a1b13ba8/example2/Example.hpp?at=default&fileviewer=file-view-default>.
+/// @class LuaInterpretter
+/// @brief Lua can only call static functions of type integer.
+/// However it's possible for non-static function to be called within the static examples.
+/// Values are passed from the static functions in LuaFunctions to this class.
+/// It is also possible to return values back to LuaFunctions.
+//----------------------------------------------------------------------------------------------------------------------
+
 
 class LuaInterpreter
 {
@@ -13,80 +27,70 @@ class LuaInterpreter
   public:
 
       //LuaInterpreter(int agentNum);
-      LuaInterpreter() : m_velocity(),
-                         m_position(),
-                         m_center(),
+      LuaInterpreter() : m_center(),
                          m_goal(),
                          m_agent(),
                          m_predators(),
-                         m_predatorAngle(),
-                         m_cohesion(){}
-
-      RVO::Vector3 m_velocity;
-      RVO::Vector3 m_position;
+                         m_predatorAngle(){}
 
       RVO::Vector3 m_center;
       RVO::Vector3 m_goal = RVO::Vector3(0.0f,0.0f,0.0f);
-
       int m_agent;
-
       std::vector <RVO::Vector3> m_predators;
-
       float m_predatorAngle;
 
-      RVO::Vector3 m_cohesion;
-
-
       float m_agentSpeed;
-
       float m_numAgents;
 
+      RVO::Vector3 getAgentVelocity(int agentNum) const;
+      RVO::Vector3 getAgentPosition(int agentNum) const;
 
-      int getAgent() const;
-      void setAgent(int val);
+
+      int getAgentNeighborNum(int agentNum, int neighborCount) const;
+      int getAgentNeighborCount(int agentNum) const;
+      void setPredators(RVO::Vector3 predator);
+
 
       float getPredatorAngle() const;
       void setPredatorAngle(float angle);
 
+
+
+      float getAgentMaxSpeed(int agentNum);
       void  setAgentMaxSpeed(int agentNum, float newSpeed);
-      float retrieveAgentMaxSpeed(int agentNum);
 
-      const RVO::Vector3& getPredatorPosition() const;
-      void setPredatorPosition(const RVO::Vector3& Member);
 
-      const RVO::Vector3& getVelocity() const;
-      void setVelocity(const RVO::Vector3& Member);
-      RVO::Vector3 retrieveAgentVelocity(int agentNum) const;
+
+      float getAbsoluteValue (RVO::Vector3 input) const;
+      float getPowerOf(float input, float power) const;
+
+
 
       const RVO::Vector3& getPosition() const;
       void setPosition(const RVO::Vector3& Member);
-      RVO::Vector3 retrieveAgentPosition(int agentNum) const;
+
+
 
       const RVO::Vector3& getGoal() const;
       void setGoal(const RVO::Vector3& Member);
-      RVO::Vector3 retrieveGoalPosition() const;
+//      RVO::Vector3 getGoalVector(int agentNum) const;
+
+
 
       const RVO::Vector3& getCenter() const;
       void setCenter(const RVO::Vector3& Member);
+//      RVO::Vector3 getCenterVector(int agentNum) const;
 
-      RVO::Vector3 retrieveCohesion(int agentNum) const;
-      const RVO::Vector3& getCohesion() const;
-      void setCohesion(const RVO::Vector3& Member);
 
+
+      RVO::Vector3 getCohesion(int agentNum) const;
       RVO::Vector3 getAlignment(int agentNum) const;
+//      RVO::Vector3 get
 
-//      RVO::Vector3 RetrieveCenterOfSwarm(int firstAgent, int lastAgent) const;
-      RVO::Vector3 retrieveCenterOfSwarm() const;
+      RVO::Vector3 getCenterOfSwarm() const;
 
-      RVO::Vector3 retrieveGoalVector(int agentNum) const;
 
-      RVO::Vector3 retrieveCenterVector(int agentNum) const;
-
-      float retrieveAbsoluteValue (RVO::Vector3 input) const;
-
-      float retrievePowerOf(float input, float power) const;
-
-      //int retrieveNumAgents() const;
+      //int getNumAgents() const;
 
       void setSingleAgentVelocity(int agentNum, RVO::Vector3 targetVector);
       void setAllAgentVelocities(RVO::Vector3 target, RVO::Vector3 inputVelocity);
@@ -105,9 +109,6 @@ class LuaInterpreter
 
       std::unique_ptr<RVO::RVOSimulator> m_sim;
 
-      void setPredators(int predatorNum, RVO::Vector3 predator);
-
-      const int* getAgentNum() const;
 
 //  private:
 

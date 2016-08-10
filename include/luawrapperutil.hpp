@@ -1,3 +1,11 @@
+//----------------------------------------------------------------------------------------------------------------------
+/// @file luawrapper.h
+/// @brief Utility functions complementing luawrapper.
+/// @author Alex Ames
+/// [Accessed 2016]. Available from: <https://bitbucket.org/alexames/luawrapper/src>.
+//----------------------------------------------------------------------------------------------------------------------
+
+
 /*
  * Copyright (c) 2010-2013 Alexander Ames
  * Alexander.Ames@gmail.com

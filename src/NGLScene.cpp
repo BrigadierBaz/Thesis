@@ -124,6 +124,7 @@ void NGLScene::paintGL()
 
     shader->setUniform("Colour",0.0f,1.0f,0.0f,1.0f);
 
+    // Draw the goal to the screen
     ngl::Transformation t;
     t.setPosition(m_flock->m_lua->m_goal.x(),
                   m_flock->m_lua->m_goal.y(),
@@ -133,6 +134,7 @@ void NGLScene::paintGL()
     loadMatricesToShader();
     ngl::VAOPrimitives::instance()->draw("cube");
 
+    // Draw the predators to the screen.
     for (size_t i = 0; i < Flock::m_lua->m_predators.size(); ++i)
     {
       shader->setUniform("Colour",1.0f,0.0f,1.0f,1.0f);
@@ -146,19 +148,8 @@ void NGLScene::paintGL()
       ngl::VAOPrimitives::instance()->draw("troll");
     }
 
+    // Clear the array to be filled on next frake
     m_flock->m_lua->m_predators.clear();
-
-  for(size_t j=0; j < 4; j++)
-  {
-//    RVO::Vector3 obstaclePosition = m_obstacles.at(j);
-
-//    ngl::Transformation t;
-//    t.setPosition(obstaclePosition.x(),obstaclePosition.y(),obstaclePosition.z());
-//    t.setScale(60.0,60.0,60.0);
-//    m_bodyTransform=t.getMatrix();
-//    loadMatricesToShader();
-//    ngl::VAOPrimitives::instance()->draw("sphere");
-  }
 
   // Rotation based on the mouse position for our global transform
   ngl::Mat4 rotX;
@@ -381,25 +372,12 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
   // we then switch on the key value and set the camera in the GLWindow
   switch (_event->key())
   {
-  // escape key to quite
-  case Qt::Key_Escape : QGuiApplication::exit(EXIT_SUCCESS); break;
-  case Qt::Key_R : m_flock->setupSim(); break;
-  case Qt::Key_Space : m_flock->m_animate^=true; break;
+    // escape key to quite
+    case Qt::Key_Escape : QGuiApplication::exit(EXIT_SUCCESS); break;
+    case Qt::Key_R : m_flock->setupSim(); break;
+    case Qt::Key_Space : m_flock->m_animate^=true; break;
 
-//  case Qt::Key_1     : m_flock->m_repel       = !m_flock->m_repel;break;
-//  case Qt::Key_2     : m_flock->m_expand      = !m_flock->m_expand;break;
-//  case Qt::Key_3     : m_flock->m_cohesion    = !m_flock->m_cohesion;break;
-//  case Qt::Key_4     : m_flock->m_eddy        = !m_flock->m_eddy;break;
-//  case Qt::Key_5     : m_flock->m_separation  = !m_flock->m_separation;break;
-//  case Qt::Key_6     : m_flock->m_baitBall    = !m_flock->m_baitBall;break;
-//  case Qt::Key_7     : m_flock->m_trefoil     = !m_flock->m_trefoil;break;
-//  case Qt::Key_8     : m_flock->m_geometric   = !m_flock->m_geometric;break;
-//  case Qt::Key_9     : m_flock->m_targetCenter= !m_flock->m_targetCenter;break;
-
-  default : break;
-
-
-
+    default : break;
   }
   // finally update the GLWindow and re-draw
 

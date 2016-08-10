@@ -6,18 +6,10 @@ basic OpenGL demo modified from http://qt-project.org/doc/qt-5.0/qtgui/openglwin
 #include <iostream>
 #include "NGLScene.h"
 
-extern "C" {
-# include "lua.h"
-# include "lauxlib.h"
-# include "lualib.h"
-}
-
 #include "UserInterface.h"
 
 int main(int argc, char **argv)
 {
-
-  //QGuiApplication app(argc, argv);
   // create an OpenGL format specifier
   QSurfaceFormat format;
   // set the number of samples for multisampling
@@ -42,12 +34,6 @@ int main(int argc, char **argv)
   QApplication app(argc, argv);
   // now we are going to create our scene window
   UserInterface window;
-  // and set the OpenGL format
-  //window.setFormat(format);
-  // we can now query the version to see if it worked
-  //std::cout<<"Profile is "<<format.majorVersion()<<" "<<format.minorVersion()<<"\n";
-  // set the window size
-  //window.resize(1024, 720);
   // and finally show
   window.show();
 

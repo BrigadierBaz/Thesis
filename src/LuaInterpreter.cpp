@@ -1,19 +1,44 @@
 #include "LuaInterpreter.h"
 
-//typedef int (*lua_CFunction) (lua_State *L);
 
-
-// Retrieve the active agent number
-int LuaInterpreter::getAgent() const
+/* Retrieve Agent information */
+RVO::Vector3 LuaInterpreter::getAgentVelocity(int agentNum) const
 {
-  return m_agent;
+    RVO::Vector3 agentVelocity = m_sim->getAgentVelocity(agentNum);
+    return agentVelocity;
 }
 
-void LuaInterpreter::setAgent(int val)
+RVO::Vector3 LuaInterpreter::getAgentPosition(int agentNum) const
 {
-  m_agent = val;
+    RVO::Vector3 agentPosition = m_sim->getAgentPosition(agentNum);
+    return agentPosition;
 }
 
+
+
+/* Get data on agent Neighbor */
+int LuaInterpreter::getAgentNeighborNum(int agentNum, int neighborCount) const
+{
+  return m_sim->getAgentAgentNeighbor(agentNum,neighborCount);
+}
+
+int LuaInterpreter::getAgentNeighborCount(int agentNum) const
+{
+  return m_sim->getAgentNumAgentNeighbors(agentNum);
+}
+
+
+
+
+/* Add vector into predator array to be drawn to the screen */
+void LuaInterpreter::setPredators(RVO::Vector3 predator)
+{
+   m_predators.push_back(predator);
+}
+
+
+
+/* Angle iterates with each execution of the script */
 float LuaInterpreter::getPredatorAngle() const
 {
   return m_predatorAngle;
@@ -25,68 +50,43 @@ void LuaInterpreter::setPredatorAngle(float angle)
 }
 
 
-void LuaInterpreter::setAgentMaxSpeed(int agentNum, float newSpeed)
-{
-  m_sim->setAgentMaxSpeed(agentNum, newSpeed);
-}
 
-float LuaInterpreter::retrieveAgentMaxSpeed(int agentNum)
+/* Get/Set the overall speed of a given agent */
+float LuaInterpreter::getAgentMaxSpeed(int agentNum)
 {
   float maxSpeed = m_sim->getAgentMaxSpeed(agentNum);
   return maxSpeed;
 }
 
-
-const RVO::Vector3& LuaInterpreter::getVelocity() const
+void LuaInterpreter::setAgentMaxSpeed(int agentNum, float newSpeed)
 {
-  return m_velocity;
+  m_sim->setAgentMaxSpeed(agentNum, newSpeed);
 }
 
-void LuaInterpreter::setVelocity(const RVO::Vector3& val)
-{
-  m_velocity = val;
-}
 
-RVO::Vector3 LuaInterpreter::retrieveAgentVelocity(int agentNum) const
-{
 
-    RVO::Vector3 agentVelocity = m_sim->getAgentVelocity(agentNum);
 
-    return agentVelocity;
 
-}
 
-float LuaInterpreter::retrieveAbsoluteValue(RVO::Vector3 input) const
+
+/* Operations unavailable in Lua */
+float LuaInterpreter::getAbsoluteValue(RVO::Vector3 input) const
 {
   return abs(input);
 }
 
-float LuaInterpreter::retrievePowerOf(float input, float power) const
+float LuaInterpreter::getPowerOf(float input, float power) const
 {
   return pow(input, power);
 }
 
 
-const RVO::Vector3& LuaInterpreter::getPosition() const
-{
-  return m_position;
-}
-
-void LuaInterpreter::setPosition(const RVO::Vector3& val)
-{
-  m_position = val;
-}
-
-RVO::Vector3 LuaInterpreter::retrieveAgentPosition(int agentNum) const
-{
-
-    RVO::Vector3 agentPosition = m_sim->getAgentPosition(agentNum);
-
-    return agentPosition;
-
-}
 
 
+
+
+
+/* Get/set position of goal from sim*/
 const RVO::Vector3& LuaInterpreter::getGoal() const
 {
   return m_goal;
@@ -97,26 +97,11 @@ void LuaInterpreter::setGoal(const RVO::Vector3& val)
   m_goal = val;
 }
 
-RVO::Vector3 LuaInterpreter::retrieveGoalPosition() const
-{
-  RVO::Vector3 goalPosition = m_goal;
-
-  return goalPosition;
-}
-
-
-//const RVO::Vector3& LuaInterpreter::getPredatorPosition() const
-//{
-// return m_predator;
-//}
-
-//void LuaInterpreter::setPredatorPosition(const RVO::Vector3& val)
-//{
-//  m_predator=val;
-//}
 
 
 
+
+/* Store center for use with Cpp functions */
 const RVO::Vector3& LuaInterpreter::getCenter() const
 {
   return m_center;
@@ -127,21 +112,12 @@ void LuaInterpreter::setCenter(const RVO::Vector3& val)
   m_center = val;
 }
 
-//RVO::Vector3 LuaInterpreter::RetrieveCenterOfSwarm(int firstAgent, int lastAgent) const
-//{
 
-//  RVO::Vector3 firstAgentPosition = m_sim->getAgentPosition(firstAgent);
-//  RVO::Vector3 lastAgentPosition = m_sim->getAgentPosition(lastAgent);
 
-//  RVO::Vector3 sumOfAgentPositions = firstAgentPosition.operator +(lastAgentPosition);
 
-//  RVO::Vector3 centerOfSchool = sumOfAgentPositions.operator /(2);
 
-//  return centerOfSchool;
-
-//}
-
-RVO::Vector3 LuaInterpreter::retrieveCenterOfSwarm() const
+/* Get center for target */
+RVO::Vector3 LuaInterpreter::getCenterOfSwarm() const
 {
   RVO::Vector3 sumOfAgentPositions;
   RVO::Vector3 centerOfSchool;
@@ -157,30 +133,14 @@ RVO::Vector3 LuaInterpreter::retrieveCenterOfSwarm() const
 }
 
 
-RVO::Vector3  LuaInterpreter::retrieveGoalVector(int agentNum) const
-{
-  RVO::Vector3 goalVector = m_goal - m_sim->getAgentPosition(agentNum);
-
-  return goalVector;
-}
-
-RVO::Vector3  LuaInterpreter::retrieveCenterVector(int agentNum) const
-{
-  RVO::Vector3 centerVector = m_center - m_sim->getAgentPosition(agentNum);
-
-  return centerVector;
-}
 
 
-//int LuaInterpreter::retrieveNumAgents() const
-//{
-//  // Minus 1 as index starts from 0.
-//  int numAgents = m_sim->getNumAgents() - 1;
 
-//  return numAgents;
-//}
-
-RVO::Vector3 LuaInterpreter::retrieveCohesion(int agentNum) const
+/// @brief Agents will attempt to remain in a cluster with immediate neighbors.
+/// Modified from :-
+/// Daniel Shiffman (Jun 6 2013). Flocking [online].
+/// [Accessed 2016]. Available from: <https://processing.org/examples/flocking.html>.
+RVO::Vector3 LuaInterpreter::getCohesion(int agentNum) const
 {
 
   RVO::Vector3 cohesion;
@@ -206,11 +166,11 @@ RVO::Vector3 LuaInterpreter::retrieveCohesion(int agentNum) const
      return cohesion;
 }
 
-const RVO::Vector3& LuaInterpreter::getCohesion() const
-{
-  return m_cohesion;
-}
 
+/// @brief Agents attempt to maintain parrallel movement.
+/// Modified from :-
+/// Daniel Shiffman (Jun 6 2013). Flocking [online].
+/// [Accessed 2016]. Available from: <https://processing.org/examples/flocking.html>.
 RVO::Vector3 LuaInterpreter::getAlignment(int agentNum) const
 {
   RVO::Vector3 alignment;
@@ -218,7 +178,6 @@ RVO::Vector3 LuaInterpreter::getAlignment(int agentNum) const
   if(m_sim->getNumAgents()!=0)
   {
     RVO::Vector3 sum (0.0f,0.0f,0.0f);
-    //RVO::Vector2 vAverageAgentSpeed(0,0);
     size_t neighboringAgentNumber = 0;
 
     if (m_sim->getAgentNumAgentNeighbors(agentNum) > 0)
@@ -242,17 +201,13 @@ RVO::Vector3 LuaInterpreter::getAlignment(int agentNum) const
 
 
 
-void LuaInterpreter::setCohesion(const RVO::Vector3& val)
-{
-   m_cohesion = val;
-}
 
 
 
-//void LuaInterpreter::setSingleAgentVelocity(int agentNum, RVO::Vector3 target, RVO::Vector3 inputVelocity, RVO::Vector3 agentPosition)
+
+/* Set velocities of given agents */
 void LuaInterpreter::setSingleAgentVelocity(int agentNum, RVO::Vector3 targetVector)
 {
-  //RVO::Vector3 targetVector = target - agentPosition;
   m_sim->setAgentPrefVelocity(agentNum, targetVector);
 }
 
@@ -275,7 +230,11 @@ void LuaInterpreter::setAllAgentVelocities(RVO::Vector3 target, RVO::Vector3 inp
   }
 }
 
-// Vector functions
+
+
+
+
+/* Vector Operations */
 RVO::Vector3 LuaInterpreter::addVectors(RVO::Vector3 firstVector, RVO::Vector3 secondVector)
 {
   return firstVector.operator +(secondVector);
@@ -299,15 +258,4 @@ RVO::Vector3 LuaInterpreter::divideVectors(RVO::Vector3 firstVector, float value
 bool LuaInterpreter::compareVectors(RVO::Vector3 firstVector, RVO::Vector3 secondVector)
 {
   return firstVector.operator !=(secondVector);
-}
-
-
-void LuaInterpreter::setPredators(int predatorNum, RVO::Vector3 predator)
-{
-  //m_predators.assign (10,100);
-  //m_predators.at(predatorNum)= predator;
-   m_predators.push_back(predator);
-   //m_predators.at(predatorNum) = predator;
-   //m_predators.assign(predatorNum, predator);
-
 }

@@ -1,12 +1,7 @@
 #include <iostream>
 #include <string>
 
-extern "C"
-{
-#include "lua.h"
-#include "luaconf.h"
-#include "lualib.h"
-}
+#include "lua.hpp"
 
 #include "luawrapper.hpp"
 #include "luawrapperutil.hpp"
@@ -14,72 +9,61 @@ extern "C"
 #include "LuaCustomTypes.hpp"
 #include "Flock.h"
 
-int LuaInterpreter_retrieveAgentVelocity(lua_State *L)
+
+// Define functions to be used in lua in this class.
+// Ensure to follow the same format.
+
+
+/* Retrieve Agent information */
+int LuaInterpreter_getAgentVelocity(lua_State *L)
 {
     int agentNum = luaL_checkinteger(L,2);
 
-    RVO::Vector3 result = Flock::m_lua->retrieveAgentVelocity(agentNum);
+    RVO::Vector3 result = Flock::m_lua->getAgentVelocity(agentNum);
     lua_newtable(L);
     luaU_push(L, result);
 
     return 1;
 }
 
-int LuaInterpreter_retrieveAgentPosition(lua_State *L)
+int LuaInterpreter_getAgentPosition(lua_State *L)
 {
     int agentNum = luaL_checkinteger(L,2);
 
-    RVO::Vector3 result = Flock::m_lua->retrieveAgentPosition(agentNum);
+    RVO::Vector3 result = Flock::m_lua->getAgentPosition(agentNum);
     lua_newtable(L);
     luaU_push(L, result);
 
     return 1;
 }
 
-int LuaInterpreter_retrieveGoalPosition(lua_State *L)
+
+/* Get data on agent Neighbor */
+int LuaInterpreter_getAgentNeighborNum(lua_State *L)
 {
-    RVO::Vector3 result = Flock::m_lua->retrieveGoalPosition();
+  // Get values from the lua stack. You must retrieve them in the order you pushed them.
+  int agentNum = luaL_checkinteger(L,2);
+  int neighborCount = luaL_checkinteger(L,3);
 
-    lua_newtable(L);
-    luaU_push(L, result);
-
-    return 1;
-}
-
-int LuaInterpreter_retrieveCenterOfSwarm(lua_State *L)
-{
-
-  //int firstAgent = luaL_checkinteger(L,2);
-  //int lastAgent = luaL_checkinteger(L,3);
-
-//  RVO::Vector3 result = Flock::m_lua->retrieveCenterOfSwarm(firstAgent, lastAgent);
-  RVO::Vector3 result = Flock::m_lua->retrieveCenterOfSwarm();
-
-  lua_newtable(L);
-  luaU_push(L, result);
-
+  lua_pushnumber(L, Flock::m_lua->getAgentNeighborNum(agentNum,neighborCount));
   return 1;
 }
 
-int LuaInterpreter_retrieveGoalVector(lua_State *L)
+int LuaInterpreter_getAgentNeighborCount(lua_State *L)
 {
-
   int agentNum = luaL_checkinteger(L,2);
 
-  RVO::Vector3 result = Flock::m_lua->retrieveGoalVector(agentNum);
-
-  lua_newtable(L);
-  luaU_push(L, result);
-
+  lua_pushnumber(L, Flock::m_lua->getAgentNeighborCount(agentNum));
   return 1;
 }
 
-int LuaInterpreter_retrieveCenterVector(lua_State *L)
+
+
+
+/* Constraints and useful values */
+int LuaInterpreter_getCenterOfSwarm(lua_State *L)
 {
-
-  int agentNum = luaL_checkinteger(L,2);
-
-  RVO::Vector3 result = Flock::m_lua->retrieveCenterVector(agentNum);
+  RVO::Vector3 result = Flock::m_lua->getCenterOfSwarm();
 
   lua_newtable(L);
   luaU_push(L, result);
@@ -87,39 +71,23 @@ int LuaInterpreter_retrieveCenterVector(lua_State *L)
   return 1;
 }
 
-int LuaInterpreter_retrieveNumAgents(lua_State *L)
+int LuaInterpreter_getNumAgents(lua_State *L)
 {
   // Minus 1 as index starts from 0.
   lua_pushnumber(L, Flock::m_lua->m_sim->getNumAgents() - 1);
   return 1;
 }
 
-int LuaInterpreter_retrieveAbsoluteValue(lua_State *L)
-{
-  RVO::Vector3 input  = luaU_check<RVO::Vector3>(L,2);
-  lua_pushnumber(L, Flock::m_lua->retrieveAbsoluteValue(input));
-  return 1;
-}
 
-int LuaInterpreter_retrievePowerOf(lua_State *L)
-{
-  float input = luaL_checknumber(L,2);
-  float power = luaL_checknumber(L,3);
 
-  lua_pushnumber(L, Flock::m_lua->retrievePowerOf(input, power));
-  return 1;
-}
 
+/* Set velocities of given agents */
 
 int LuaInterpreter_setSingleAgentVelocity(lua_State *L)
 {
   int agentNum = luaL_checkinteger(L,2);
+  // Vector3 check defined in luawrapperutil
   RVO::Vector3 target = luaU_check<RVO::Vector3>(L,3);
-  //RVO::Vector3 inputVelocity = luaU_check<RVO::Vector3>(L,4);
-  //RVO::Vector3 agentPosition = luaU_check<RVO::Vector3>(L,5);
-
-  //RVO::Vector3 target (0.0f,0.0f,0.0f);
-  //RVO::Vector3 inputVelocity (0.1f,0.1f,0.1f);
 
   Flock::m_lua->setSingleAgentVelocity(agentNum,target);
   return 0;
@@ -143,6 +111,74 @@ int LuaInterpreter_setAllAgentVelocities(lua_State *L)
   return 0;
 }
 
+
+
+
+/* Get/Set the overall speed of a given agent */
+
+int LuaInterpreter_getAgentMaxSpeed(lua_State *L)
+{
+  int agentNum = luaL_checknumber(L,2);
+
+  lua_pushnumber(L, Flock::m_lua->getAgentMaxSpeed(agentNum));
+  return 1;
+}
+
+int LuaInterpreter_setAgentMaxSpeed(lua_State *L)
+{
+  int agentNum = luaL_checkinteger(L,2);
+  float newSpeed = luaL_checknumber(L,3);
+
+  Flock::m_lua->setAgentMaxSpeed(agentNum,newSpeed);
+  return 0;
+}
+
+
+
+
+
+/* Preset formations */
+
+int LuaInterpreter_getCohesion(lua_State *L)
+{
+  int agentNum = luaL_checknumber(L,2);
+
+  lua_newtable(L);
+  luaU_push(L, Flock::m_lua->getCohesion(agentNum));
+  return 1;
+}
+
+int LuaInterpreter_getAlignment(lua_State *L)
+{
+  int agentNum = luaL_checknumber(L,2);
+
+  lua_newtable(L);
+  luaU_push(L, Flock::m_lua->getAlignment(agentNum));
+  return 1;
+}
+
+
+
+/* Retrieve predator data */
+int LuaInterpreter_getPredators(lua_State *L)
+{
+  lua_pushinteger(L, Flock::m_lua->m_predators.size());
+  return 1;
+}
+
+int LuaInterpreter_setPredators(lua_State *L)
+{
+  RVO::Vector3 predator = luaU_check<RVO::Vector3>(L,2);
+
+  Flock::m_lua->setPredators(predator);
+  return 0;
+}
+
+
+
+
+
+/* Vector Operations */
 int LuaInterpreter_addVectors(lua_State *L)
 {
   RVO::Vector3 firstVector = luaU_check<RVO::Vector3>(L,2);
@@ -204,90 +240,29 @@ int LuaInterpreter_compareVectors(lua_State *L)
   return 0;
 }
 
-
-int LuaInterpreter_getAgent(lua_State *L)
+int LuaInterpreter_getAbsoluteValue(lua_State *L)
 {
-  lua_pushnumber(L, Flock::m_lua->getAgent());
+  RVO::Vector3 input  = luaU_check<RVO::Vector3>(L,2);
+  lua_pushnumber(L, Flock::m_lua->getAbsoluteValue(input));
   return 1;
 }
 
-int LuaInterpreter_setAgent(lua_State *L)
+int LuaInterpreter_getPowerOf(lua_State *L)
 {
-  int number = luaL_checkinteger(L,2);
-  Flock::m_lua->setAgent(number);
-  return 0;
-}
+  float input = luaL_checknumber(L,2);
+  float power = luaL_checknumber(L,3);
 
-int LuaInterpreter_setAgentMaxSpeed(lua_State *L)
-{
-  int agentNum = luaL_checkinteger(L,2);
-  float newSpeed = luaL_checknumber(L,3);
-
-  Flock::m_lua->setAgentMaxSpeed(agentNum,newSpeed);
-  return 0;
-}
-
-int LuaInterpreter_retrieveAgentMaxSpeed(lua_State *L)
-{
-  int agentNum = luaL_checknumber(L,2);
-
-  lua_pushnumber(L, Flock::m_lua->retrieveAgentMaxSpeed(agentNum));
+  lua_pushnumber(L, Flock::m_lua->getPowerOf(input, power));
   return 1;
 }
 
-int LuaInterpreter_retrieveCohesion(lua_State *L)
-{
-  int agentNum = luaL_checknumber(L,2);
 
-  lua_newtable(L);
-  luaU_push(L, Flock::m_lua->retrieveCohesion(agentNum));
-  return 1;
-}
 
-int LuaInterpreter_getAlignment(lua_State *L)
-{
-  int agentNum = luaL_checknumber(L,2);
 
-  lua_newtable(L);
-  luaU_push(L, Flock::m_lua->getAlignment(agentNum));
-  return 1;
-}
 
-int LuaInterpreter_setPredators(lua_State *L)
-{
-  // Minus 1 to correct index
-  int predatorNum = (luaL_checknumber(L,2));
-  RVO::Vector3 predator = luaU_check<RVO::Vector3>(L,3);
-
-  Flock::m_lua->setPredators(predatorNum, predator);
-  return 0;
-}
-
-int LuaInterpreter_getPredators(lua_State *L)
-{
-  lua_pushinteger(L, Flock::m_lua->m_predators.size());
-  return 1;
-}
-
-//static int LuaInterpreter_ReturnVelocity(lua_State* L)
-//{
-//    LuaInterpreter* interpreter = luaW_check<LuaInterpreter>(L, 1);
-//    Flock::m_lua->m_velocity = interpreter->m_velocity;
-//    return 0;
-//}
-
+/* Others */
 static int LuaInterpreter_printMe(lua_State* L)
 {
-    std::cout
-        << "velocity={x=" << Flock::m_lua->m_velocity.x()
-        << ",y=" << Flock::m_lua->m_velocity.y()
-        << ",z=" << Flock::m_lua->m_velocity.z()
-         << "}"  << std::endl;
-    std::cout
-        << "position={x=" << Flock::m_lua->m_position.x()
-        << ",y=" << Flock::m_lua->m_position.y()
-        << ",z=" << Flock::m_lua->m_position.z()
-         << "}"  << std::endl;
     std::cout
         << "goal={x=" << Flock::m_lua->m_goal.x()
         << ",y=" << Flock::m_lua->m_goal.y()
@@ -304,53 +279,48 @@ static int LuaInterpreter_printMe(lua_State* L)
     return 0;
 }
 
+
+
+
+// Lua functions are defined in here
+// write "interpreter:" and the string to the left with brackets and any arguments.
 static luaL_reg LuaInterpreter_metatable[] =
-{
+{ 
+  // Instructions in this format are simple get set functions
+  { "getAgent", luaU_get<LuaInterpreter, int, &LuaInterpreter::m_agent> },
+  { "setAgent", luaU_set<LuaInterpreter, int, &LuaInterpreter::m_agent> },
 
-  { "getVelocity", luaU_get<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_velocity> },
-  { "setVelocity", luaU_set<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_velocity> },
-  { "velocity", luaU_getset<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_velocity> },
-
-  { "getPosition", luaU_get<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_position> },
-  { "setPosition", luaU_set<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_position> },
-  { "position", luaU_getset<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_position> },
+  { "getPredatorAngle", luaU_get<LuaInterpreter, float, &LuaInterpreter::m_predatorAngle> },
+  { "setPredatorAngle", luaU_set<LuaInterpreter, float, &LuaInterpreter::m_predatorAngle> },
 
   { "getGoal", luaU_get<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_goal> },
   { "setGoal", luaU_set<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_goal> },
-  { "coal", luaU_getset<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_goal> },
+  { "goal", luaU_getset<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_goal> },
 
   { "getCenter", luaU_get<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_center> },
   { "setCenter", luaU_set<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_center> },
   { "center", luaU_getset<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_center> },
 
-//  { "getPredatorPosition", luaU_get<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_predator> },
-//  { "setPredatorPosition", luaU_set<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_predator> },
-//  { "predatorPosition", luaU_getset<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_predator> },
 
-  { "retrieveCohesion", LuaInterpreter_retrieveCohesion },
-  { "getCohesion", luaU_get<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_cohesion> },
-  { "setCohesion", luaU_set<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_cohesion> },
-  { "cohesion", luaU_getset<LuaInterpreter, RVO::Vector3, &LuaInterpreter::m_cohesion> },
+  // Functions can be found above, require complicated procedures
 
+  { "getAgentNeighborNum", LuaInterpreter_getAgentNeighborNum },
+  { "getAgentNeighborCount", LuaInterpreter_getAgentNeighborCount },
+
+  { "getCohesion", LuaInterpreter_getCohesion },
   { "getAlignment", LuaInterpreter_getAlignment },
-
-  { "getPredatorAngle", luaU_get<LuaInterpreter, float, &LuaInterpreter::m_predatorAngle> },
-  { "setPredatorAngle", luaU_set<LuaInterpreter, float, &LuaInterpreter::m_predatorAngle> },
 
   { "setPredators", LuaInterpreter_setPredators },
   { "getPredators", LuaInterpreter_getPredators },
 
   // Custom functions
-  { "retrieveAgentVelocity", LuaInterpreter_retrieveAgentVelocity },
-  { "retrieveAgentPosition", LuaInterpreter_retrieveAgentPosition },
-  { "retrieveGoalPosition",  LuaInterpreter_retrieveGoalPosition },
-  { "retrieveCenterOfSwarm",  LuaInterpreter_retrieveCenterOfSwarm },
+  { "getAgentVelocity", LuaInterpreter_getAgentVelocity },
+  { "getAgentPosition", LuaInterpreter_getAgentPosition },
+  { "getCenterOfSwarm",  LuaInterpreter_getCenterOfSwarm },
 
-  { "retrieveNumAgents", LuaInterpreter_retrieveNumAgents },
-  { "retrieveGoalVector",  LuaInterpreter_retrieveGoalVector },
-  { "retrieveCenterVector",  LuaInterpreter_retrieveCenterVector },
-  { "retrieveAbsoluteValue",  LuaInterpreter_retrieveAbsoluteValue },
-  { "retrievePowerOf", LuaInterpreter_retrievePowerOf },
+  { "getNumAgents", LuaInterpreter_getNumAgents },
+  { "getAbsoluteValue",  LuaInterpreter_getAbsoluteValue },
+  { "getPowerOf", LuaInterpreter_getPowerOf },
 
   { "setSingleAgentVelocity", LuaInterpreter_setSingleAgentVelocity },
   { "setNeighborAgentVelocity", LuaInterpreter_setNeighborAgentVelocity },
@@ -364,13 +334,8 @@ static luaL_reg LuaInterpreter_metatable[] =
 
   { "printMe", LuaInterpreter_printMe },
 
-  { "getAgent", LuaInterpreter_getAgent },
-  { "setAgent", LuaInterpreter_setAgent },
-
   { "setAgentMaxSpeed", LuaInterpreter_setAgentMaxSpeed },
-  { "retrieveAgentMaxSpeed", LuaInterpreter_retrieveAgentMaxSpeed },
-  //{ "setAgent", luaU_set<LuaInterpreter, int, &LuaInterpreter::m_agent> },
-  //{ "Agent", luaU_getset<LuaInterpreter, int, &LuaInterpreter::m_agent> },
+  { "getAgentMaxSpeed", LuaInterpreter_getAgentMaxSpeed },
 
 
   {NULL, NULL}
@@ -378,6 +343,7 @@ static luaL_reg LuaInterpreter_metatable[] =
 
 int luaopen_LuaInterpreter(lua_State* L)
 {
-    luaW_register<LuaInterpreter>(L, "LuaInterpreter", NULL, LuaInterpreter_metatable);//, Flock::m_lua->L);
+    // Register the metatable in Lua
+    luaW_register<LuaInterpreter>(L, "LuaInterpreter", NULL, LuaInterpreter_metatable);
     return 1;
 }

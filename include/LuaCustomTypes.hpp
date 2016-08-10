@@ -15,6 +15,15 @@ extern "C" {
 
 #include "RVO.h"
 
+//----------------------------------------------------------------------------------------------------------------------
+/// @file LuaCustomTypes.h
+/// @brief this class inherits from the Qt OpenGLWindow and allows us to use NGL to draw OpenGL
+/// @author Luke Bazalgette
+/// Modified from :-
+/// Alex Ames (April 5 2013). LuaWrapperExample/example2/ [online].
+/// [Accessed 2016]. Available from: <https://bitbucket.org/alexames/luawrapperexample/src/f6958844b60f91ed90d039eabe807522a1b13ba8/example2/LuaCustomTypes.hpp?at=default&fileviewer=file-view-default>.
+//----------------------------------------------------------------------------------------------------------------------
+
 // LuaWrapper knows about primitive types like ints and floats, but it doesn't
 // know about things like std::strings or other more complicated types.
 // Sometimes, rather than register the type with LuaWrapper, it's easier to
@@ -47,9 +56,8 @@ struct luaU_Impl<std::string>
     }
 };
 
-
-// These two functions let me convert the RVO::Vector3 structure into a Lua
-// table holding the x, y and z values
+// RVO Vector3 type is not supported by default,
+// to simplify code I have created a series of get/set templates
 template<>
 struct luaU_Impl<RVO::Vector3>
 {
@@ -77,55 +85,6 @@ struct luaU_Impl<RVO::Vector3>
         luaU_setfield<float>(L, -1, "x", val.x());
     }
 };
-
-//// It is possible to get multiple Vectors from an array
-//template<>
-//struct luaU_Impl<std::vector<RVO::Vector3>>
-//{
-//    static std::vector<RVO::Vector3> luaU_check(lua_State* L, int index)
-//    {
-//        return RVO::Vector3(
-//            luaU_getfield<float>(L, index, "x"),
-//            luaU_getfield<float>(L, index, "y"),
-//            luaU_getfield<float>(L, index, "z"));
-//    }
-
-//    static std::vector<RVO::Vector3> luaU_to(lua_State* L, int index )
-//    {
-//        return RVO::Vector3(
-//            luaU_getfield<float>(L, index, "x"),
-//            luaU_getfield<float>(L, index, "y"),
-//            luaU_getfield<float>(L, index, "z"));
-//    }
-
-//    static void luaU_push (lua_State* L, const std::vector<RVO::Vector3>& val)
-//    {
-//        lua_newtable(L);
-//        luaU_setfield<float>(L, -1, "z", val.z());
-//        luaU_setfield<float>(L, -1, "y", val.y());
-//        luaU_setfield<float>(L, -1, "x", val.x());
-//    }
-//};
-
-// size_t is not recognised by default to needs to be defined
-//template<>
-//struct luaU_Impl<size_t>
-//{
-//    static size_t luaU_check(lua_State* L, int index)
-//    {
-//        return size_t(luaL_checkinteger(L, index));
-//    }
-
-//    static size_t luaU_to(lua_State* L, int index )
-//    {
-//        return size_t(lua_tointeger(L, index));
-//    }
-
-//    static void luaU_push (lua_State* L, const size_t& val)
-//    {
-//        lua_pushinteger(L, val);
-//    }
-//};
 
 
 #endif // LUACUSTOMTYPES

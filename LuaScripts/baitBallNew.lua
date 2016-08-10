@@ -43,10 +43,13 @@ function baitBall(angle, position, center, centerVector, agent)
 		--print (k,v)
 	--end
 	
-	interpreter:setSingleAgentVelocity(agent, interpreter:addVectors(centerVector, interpreter:addVectors(newVelocity,steer)))
-	newSpeed = interpreter:getAgentMaxSpeed(agent) - 0.1
+	newSpeed = interpreter:getAgentMaxSpeed(agent) - 0.05
 	if newSpeed < 0.4 then newSpeed = 0.4 end
 	interpreter:setAgentMaxSpeed(agent, newSpeed)
+	
+	final = interpreter:addVectors(centerVector, interpreter:addVectors(newVelocity,steer))
+
+	return final
 end
     
 
@@ -114,7 +117,7 @@ do
 					
 	goal = interpreter:getGoal()
     
-    predatorArray = {predator, otherPredator, finalPredator}
+    predatorArray = { goal}
     
     --cohesion = interpreter:getCohesion(agent)
     --interpreter:setSingleAgentVelocity(agent, interpreter:subVectors(position, cohesion))
@@ -140,16 +143,21 @@ do
     oldPredator = {x=0,
 					y=0,
 					z=0}
+					
+	predatorsInRange = 0
+	interpreter:setSingleAgentVelocity(agent, baitBall(angle, position, center, centerVector, agent))
 
 	for k,v in pairs(predatorArray)
 	do
 	newPredator = predatorArray[k]
 	predatorAbsolute = interpreter:getAbsoluteValue(newPredator)
-	
+
 		if newPredator["x"] - distance < position["x"] and position["x"] < newPredator["x"] + distance and
 		   newPredator["z"] - distance < position["z"] and position["z"] < newPredator["z"] + distance and
 		   newPredator["y"] - distance < position["y"] and position["y"] < newPredator["y"] + distance
 		 then
+		 
+			predatorsInRange = predatorsInRange + 1
 			
 			--interpreter:setAgentMaxSpeed(agent, 0.9 + (predatorAbsolute + positionAbsolute)/100)
 			newSpeed = interpreter:getAgentMaxSpeed(agent) 
@@ -172,10 +180,16 @@ do
 						 
 			steer = interpreter:addVectors(cohesion,randomVec)
 			
-			oldVelocity = interpreter:getAgentVelocity(agent)
-			oldVelocity = interpreter:subVectors(oldVelocity,oldPredator)
+			print(predatorsInRange)
 			
-			newPredator = interpreter:divideVectors(newPredator,k)
+			oldVelocity = interpreter:getAgentVelocity(agent)
+			
+			if oldPredator.x ~= 0
+			then
+				oldVelocity = interpreter:subVectors(position,oldPredator)
+			end
+			
+			newPredator = interpreter:divideVectors(newPredator,predatorsInRange)
 			
 			interpreter:setSingleAgentVelocity(agent, interpreter:addVectors(oldVelocity,interpreter:subVectors(cohesion, newPredator)))
 			
@@ -190,10 +204,11 @@ do
 			
 			--interpreter:setSingleAgentVelocity(agent,interpreter:subVectors(cohesion, newPredator))
 			
-			--oldPredator = interpreter:addVectors(oldPredator, v)
-			oldPredator = interpreter:divideVectors(interpreter:addVectors(oldPredator, v),k)
+			oldPredator = interpreter:addVectors(oldPredator, v)
+			oldPredator = interpreter:divideVectors(interpreter:addVectors(oldPredator, v),predatorsInRange)
 			
-		else baitBall(angle, position, center, centerVector, agent)
+		else 
+			interpreter:setSingleAgentVelocity(agent, interpreter:addVectors(centerVector, baitBall(angle, position, center, centerVector, agent)))
 		end
 	end
     

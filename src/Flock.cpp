@@ -22,8 +22,6 @@ void Flock::setupSim()
 
   //m_lua->m_predator =  RVO::Vector3(30.0f,0.0f,30.0f);
 
-  m_agentRadius = 2.0f;
-
   /* Specify the global time step of the simulation. */
   m_lua->m_sim->setTimeStep(0.75f);
   /* Specify the default parameters for agents that are subsequently added. */
@@ -33,28 +31,6 @@ void Flock::setupSim()
                                  2.0f,
                                  m_agentRadius,
                                  0.8f);
-
-
-  if (m_terrainState == TerrainState::BASIC)
-  {
-    m_minNegative = 0;
-    m_minPositive = 5;
-    m_maxPositive = 10;
-    m_maxNegative = 0;
-
-    //Number of blocks will always be sqare of value entered.
-    m_numberOfBlocks = 5;
-    m_blocksOffset = -5 * m_numberOfBlocks;
-
-    for (int i = 0; i < m_numberOfBlocks; ++i)
-    {
-
-      m_obstacles.push_back(RVO::Vector3(m_blocksOffset + (m_minNegative + (i-1) * 210.0f),
-                                        0,
-                                        m_blocksOffset + (m_maxNegative + (i-1) * 210.0f)));
-
-    }
-  }
 
   /* Add agents, specifying their start position, and store their goals on the opposite side of the environment. */
     for (float a = 0; a < M_PI; a += 0.1f)
@@ -79,10 +55,6 @@ void Flock::setupSim()
 
 void Flock::setPreferredVelocities()
 {
-
-//  m_lua->setAgent(m_agentCount);
-
-  //m_lua->setSingleAgentVelocity(5, RVO::Vector3(0.1,0.0,0.1),RVO::Vector3(0.0,0.0,0.0));
   /* initialize Lua */
   m_lua->L = lua_open();
 
@@ -94,32 +66,19 @@ void Flock::setPreferredVelocities()
 
     lua_setglobal(m_lua->L, "interpreter");
 
-//    if (m_argc == 2)
-//    {
-//      luaL_dofile(m_lua->L, m_argv[1]);
-//    }
-//    /* load the script */
-//    else{ luaL_dofile(m_lua->L, "baitBall.lua");}
+    // If the string isn't empty, load the file from the string
+    if (!m_luaSimScript.empty())
+    {
+      const char * file = m_luaSimScript.c_str();
+      luaL_dofile(m_lua->L, file);
+    }
 
-  luaL_dofile(m_lua->L, "LuaScripts/baitBall.lua");
+    /* load the script */
+    else{ luaL_dofile(m_lua->L, "LuaScripts/baitBallFinal.lua");}
+
 
   lua_close(m_lua->L);
 
-
-//  if(m_agentCount == m_lua->m_sim->getNumAgents())
-//  {m_agentCount = 0;}
-
-}
-
-bool Flock::reachedGoal()
-{
-//  /* Check if all agents have reached their goals. */
-//    if (RVO::abs(m_vCenterOfSchool - m_vGoalPosition) < 140.0f)
-//    {
-      return false;
-//    }
-//    setupSim();
-//    return true;
 }
 
 

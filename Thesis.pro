@@ -27,11 +27,6 @@ HEADERS+= $$PWD/include/*.h \
           $$PWD/include/*.hpp \
           $$PWD/include/RVO2-3D/*.h \
           $$PWD/include/lua/*.h
-#            include/Obstacle3D.h \
-#            include/luawrapper.hpp \
-#            include/luawrapperutil.hpp \
-#    include/LuaInterpreter.h \
-
 # and add the include dir into the search path for Qt and make
 INCLUDEPATH +=./include \
               $$PWD/../RVO2-3D/ \
